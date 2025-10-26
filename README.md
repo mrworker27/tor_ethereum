@@ -4,7 +4,7 @@ This repo consists of:
 1. `configs/torrc` configuration file that can be used to run Ethereum execution client as an onion service
 2. Several scripts that will help you to launch and maintain such service
 
-To launch tor daemon locally:
+To launch tor locally:
 ```
 ./tor.sh
 ```
