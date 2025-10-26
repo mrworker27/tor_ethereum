@@ -8,31 +8,31 @@ NC='\033[0m' # No Color
 ONION_SECRET_KEY_FILE=""
 
 # check if Tor is installed
-if ! command -v tor &> /dev/null; then
-	    echo -e "${YELLOW}Tor is not installed. Please install it using:${NC}"
-	        echo ""
-		    
-    # detect OS and provide installation instructions
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "  brew install tor"
-    elif [[ -f /etc/debian_version ]]; then
-        echo "  sudo apt-get update && sudo apt-get install tor"
-    elif [[ -f /etc/redhat-release ]]; then
-        echo "  sudo yum install tor"
-    else
-        echo "  Please install Tor using your system's package manager"
-    fi
-     
-    echo ""
-    echo "After installing Tor, run this script again."
-    exit 1
+if ! command -v tor &>/dev/null; then
+	echo -e "${YELLOW}Tor is not installed. Please install it using:${NC}"
+	echo ""
+
+	# detect OS and provide installation instructions
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		echo "  brew install tor"
+	elif [[ -f /etc/debian_version ]]; then
+		echo "  sudo apt-get update && sudo apt-get install tor"
+	elif [[ -f /etc/redhat-release ]]; then
+		echo "  sudo yum install tor"
+	else
+		echo "  Please install Tor using your system's package manager"
+	fi
+
+	echo ""
+	echo "After installing Tor, run this script again."
+	exit 1
 fi
 
 TOR_BIN=$(which tor)
 
 # Create a systemd service file
 echo -e "\n${YELLOW}Creating systemd service file${NC}"
-cat > tor-ethereum.service << 'EOF'
+cat >tor-ethereum.service <<'EOF'
 [Unit]
 Description=Tor hidden service for Ethereum
 After=network.target
