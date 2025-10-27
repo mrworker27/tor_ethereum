@@ -7,9 +7,6 @@ HiddenServiceVersion 3
 HiddenServiceMaxStreams 100
 HiddenServiceMaxStreamsCloseCircuit 1
 
-# Security
-SocksPort 9050                           # Disable SOCKS if only using hidden service
-
 # Logging
 Log notice file ./tor_data/tor.log
 DataDirectory ./tor_data
