@@ -22,11 +22,14 @@ fi
 
 ONION=$(cat "$SERVICE_DIR/hostname")
 ONION_PORT="8545"
+REQUEST="'{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1234}'"
+SOCKS_OPTIONS="-x socks5h://127.0.0.1:9050 --connect-timeout 10"
 echo -e "${GREEN}[+] Onion address${NC}:\t\t\t$ONION"
 
 echo -e "${YELLOW}Checking that onion service is reachable...$NC"
-if timeout 30 curl -s -x socks5h://127.0.0.1:9050 --connect-timeout 10 http://$ONION:$ONION_PORT/ \
-	-o /dev/null -w "%{http_code}\n" 2>/dev/null | grep -q "200\|404\|500"; then
+if timeout 30 curl -s $SOCKS_OPTIONS http://$ONION:$ONION_PORT/ -X POST --data "$REQUEST" \
+	-H "Content-Type: application/json" \
+	-o /dev/null -w "%{http_code}\n" 2>/dev/null | grep -q "200"; then
 	echo -e "${GREEN}[+] Ethereum client is reachable${NC}: \t$ONION:$ONION_PORT"
 	exit 0
 else
