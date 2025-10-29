@@ -8,7 +8,7 @@ NC='\033[0m' # No Color
 SERVICE_DIR="${1:-./onion_service}"
 
 SOCKS_OPTIONS="-x socks5h://127.0.0.1:9050 --connect-timeout 10"
-REQUEST="'{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1234}'"
+REQUEST='{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1234}'
 check_onion_service() {
 	ONION=$1
 	ONION_PORT=$2
