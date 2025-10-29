@@ -22,7 +22,7 @@ fi
 
 ONION=$(cat "$SERVICE_DIR/hostname")
 ONION_PORT="8545"
-echo -e "${GREEN}[+] Onion address${NC}\t\t\t$ONION:"
+echo -e "${GREEN}[+] Onion address${NC}:\t\t\t$ONION"
 
 echo -e "${YELLOW}Checking that onion service is reachable...$NC"
 if timeout 30 curl -s -x socks5h://127.0.0.1:9050 --connect-timeout 10 http://$ONION:$ONION_PORT/ \
@@ -30,6 +30,6 @@ if timeout 30 curl -s -x socks5h://127.0.0.1:9050 --connect-timeout 10 http://$O
 	echo -e "${GREEN}[+] Ethereum client is reachable${NC}: \t$ONION:$ONION_PORT"
 	exit 0
 else
-	echo "${RED}[!] Ethereum client is not yet reachable in TOR network (typical propagation time: 5-10 minutes)$NC"
+	echo -e "${RED}[!] Ethereum client is not yet reachable in TOR network (typical propagation time: 5-10 minutes)$NC"
 	exit 1
 fi
