@@ -7,6 +7,29 @@ NC='\033[0m' # No Color
 
 SERVICE_DIR="${1:-./onion_service}"
 
+SOCKS_OPTIONS="-x socks5h://127.0.0.1:9050 --connect-timeout 10"
+REQUEST="'{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1234}'"
+check_onion_service() {
+	ONION=$1
+	ONION_PORT=$2
+	local http_code
+	local curl_exit_code
+	http_code=$(curl -s $SOCKS_OPTIONS \
+	    -X POST \
+	    -H "Content-Type: application/json" \
+	    -d "$REQUEST" \
+	    -o /dev/null \
+	    -w "%{http_code}" \
+	    "http://$ONION:$ONION_PORT/" 2>/dev/null)
+
+	curl_exit_code=$?
+	if [ $curl_exit_code -eq 0 ] && [ "$http_code" = "200" ]; then
+	    return 0 # success
+	fi
+
+	return 1
+}
+
 echo -e "${YELLOW}Checking TOR daemon...$NC"
 if ! timeout 1 bash -c "cat < /dev/null > /dev/tcp/127.0.0.1/9050" 2>/dev/null; then
 	echo -e "${RED}[-] Tor not running on port 9050$NC"
@@ -22,14 +45,10 @@ fi
 
 ONION=$(cat "$SERVICE_DIR/hostname")
 ONION_PORT="8545"
-REQUEST="'{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1234}'"
-SOCKS_OPTIONS="-x socks5h://127.0.0.1:9050 --connect-timeout 10"
 echo -e "${GREEN}[+] Onion address${NC}:\t\t\t$ONION"
 
 echo -e "${YELLOW}Checking that onion service is reachable...$NC"
-if timeout 30 curl -s $SOCKS_OPTIONS http://$ONION:$ONION_PORT/ -X POST --data "$REQUEST" \
-	-H "Content-Type: application/json" \
-	-o /dev/null -w "%{http_code}\n" 2>/dev/null | grep -q "200"; then
+if check_onion_service $ONION $ONION_PORT ; then
 	echo -e "${GREEN}[+] Ethereum client is reachable${NC}: \t$ONION:$ONION_PORT"
 	exit 0
 else
